@@ -25,7 +25,13 @@ module "vpc" {
 data "aws_availability_zones" "available" {}
 
 locals {
-  availability_zones       = "${length(var.availability_zones) > 0 ? var.availability_zones : data.aws_availability_zones.available.names}"
+  availability_zones_all = [
+    "${var.availability_zones}",
+    "${data.aws_availability_zones.available.names}",
+  ]
+
+  availability_zones_index = "${length(var.availability_zones) > 0 ? 0 : 1}"
+  availability_zones       = "${local.availability_zones_all[local.availability_zones_index]}"
   max_availability_zones   = "${var.limit_availability_zones == "true" ? 2 : length(local.availability_zones)}"
   availability_zones_final = "${slice(local.availability_zones, 0, local.max_availability_zones)}"
 }
