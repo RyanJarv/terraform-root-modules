@@ -24,8 +24,9 @@ locals {
 }
 
 module "subnets" {
-  source              = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=tags/0.3.6"
+  source              = "git::https://github.com/cloudposse/terraform-aws-dynamic-subnets.git?ref=tags/0.8.0"
   availability_zones  = "${local.availability_zones}"
+  max_subnet_count    = "${local.max_availability_zones}"
   namespace           = "${var.namespace}"
   stage               = "${var.stage}"
   name                = "${local.name}"
