@@ -135,8 +135,9 @@ variable "atlantis_alb_ingress_authenticated_paths" {
 }
 
 module "atlantis" {
-  #source    = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=tags/0.5.0"
-  source  = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=refactor"
+  source = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=tags/0.5.0"
+
+  #source  = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=refactor"
   enabled = "${var.atlantis_enabled}"
 
   namespace = "${var.namespace}"
