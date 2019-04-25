@@ -167,10 +167,10 @@ module "atlantis" {
   security_group_ids     = ["${module.vpc.vpc_default_security_group_id}"]
   vpc_id                 = "${module.vpc.vpc_id}"
 
-  alb_ingress_authenticated_listener_arns       = ["${module.alb.https_listener_arn}"]
+  alb_ingress_authenticated_listener_arns       = "${module.alb.https_listener_arn}"
   alb_ingress_authenticated_listener_arns_count = 1
 
-  alb_ingress_unauthenticated_listener_arns       = ["${module.alb.listener_arns}"]
+  alb_ingress_unauthenticated_listener_arns       = "${module.alb.listener_arns}"
   alb_ingress_unauthenticated_listener_arns_count = 2
 
   alb_ingress_unauthenticated_paths             = ["${var.atlantis_alb_ingress_unauthenticated_paths}"]
