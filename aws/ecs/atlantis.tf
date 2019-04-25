@@ -135,56 +135,60 @@ variable "atlantis_alb_ingress_authenticated_paths" {
 }
 
 module "atlantis" {
-  source = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=tags/0.5.0"
-
-  #source  = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=refactor"
+  #source    = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=tags/0.5.0"
+  source  = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=refactor"
   enabled = "${var.atlantis_enabled}"
 
   namespace = "${var.namespace}"
   stage     = "${var.stage}"
   name      = "${var.name}"
 
-  region = "${var.region}"
-
-  #aws_logs_region = "${var.region}"
+  region          = "${var.region}"
+  aws_logs_region = "${var.region}"
 
   atlantis_gh_team_whitelist = "${var.atlantis_gh_team_whitelist}"
   atlantis_gh_user           = "${var.atlantis_gh_user}"
   atlantis_repo_whitelist    = ["${var.atlantis_repo_whitelist}"]
-  alb_arn_suffix             = "${module.alb.alb_arn_suffix}"
-  alb_dns_name               = "${module.alb.alb_dns_name}"
-  alb_name                   = "${module.alb.alb_name}"
-  alb_zone_id                = "${module.alb.alb_zone_id}"
-  container_cpu              = "${var.atlantis_container_cpu}"
-  container_memory           = "${var.atlantis_container_memory}"
-  branch                     = "${var.atlantis_branch}"
-  parent_zone_id             = "${module.dns.zone_id}"
-  ecs_cluster_arn            = "${aws_ecs_cluster.default.arn}"
-  ecs_cluster_name           = "${aws_ecs_cluster.default.name}"
-  repo_name                  = "${var.atlantis_repo_name}"
-  repo_owner                 = "${var.atlantis_repo_owner}"
-  #ecs_private_subnet_ids = ["${module.subnets.private_subnet_ids}"]
-  private_subnet_ids                              = ["${module.subnets.private_subnet_ids}"]
-  security_group_ids                              = ["${module.vpc.vpc_default_security_group_id}"]
-  vpc_id                                          = "${module.vpc.vpc_id}"
-  alb_ingress_authenticated_listener_arns         = ["${module.alb.https_listener_arn}"]
-  alb_ingress_authenticated_listener_arns_count   = 1
+
+  alb_arn_suffix = "${module.alb.alb_arn_suffix}"
+  alb_dns_name   = "${module.alb.alb_dns_name}"
+  alb_name       = "${module.alb.alb_name}"
+  alb_zone_id    = "${module.alb.alb_zone_id}"
+
+  container_cpu    = "${var.atlantis_container_cpu}"
+  container_memory = "${var.atlantis_container_memory}"
+
+  branch                 = "${var.atlantis_branch}"
+  parent_zone_id         = "${module.dns.zone_id}"
+  ecs_cluster_arn        = "${aws_ecs_cluster.default.arn}"
+  ecs_cluster_name       = "${aws_ecs_cluster.default.name}"
+  repo_name              = "${var.atlantis_repo_name}"
+  repo_owner             = "${var.atlantis_repo_owner}"
+  ecs_private_subnet_ids = ["${module.subnets.private_subnet_ids}"]
+  security_group_ids     = ["${module.vpc.vpc_default_security_group_id}"]
+  vpc_id                 = "${module.vpc.vpc_id}"
+
+  alb_ingress_authenticated_listener_arns       = ["${module.alb.https_listener_arn}"]
+  alb_ingress_authenticated_listener_arns_count = 1
+
   alb_ingress_unauthenticated_listener_arns       = ["${module.alb.listener_arns}"]
   alb_ingress_unauthenticated_listener_arns_count = 2
-  alb_ingress_unauthenticated_paths               = ["${var.atlantis_alb_ingress_unauthenticated_paths}"]
-  alb_ingress_listener_unauthenticated_priority   = "${var.atlantis_alb_ingress_listener_unauthenticated_priority}"
-  alb_ingress_authenticated_paths                 = ["${var.atlantis_alb_ingress_authenticated_paths}"]
-  alb_ingress_listener_authenticated_priority     = "${var.atlantis_alb_ingress_listener_authenticated_priority}"
-  authentication_type                             = "${var.atlantis_authentication_type}"
-  authentication_cognito_user_pool_arn            = "${var.atlantis_cognito_user_pool_arn}"
-  authentication_cognito_user_pool_client_id      = "${var.atlantis_cognito_user_pool_client_id}"
-  authentication_cognito_user_pool_domain         = "${var.atlantis_cognito_user_pool_domain}"
-  authentication_oidc_client_id                   = "${var.atlantis_oidc_client_id}"
-  authentication_oidc_client_secret               = "${var.atlantis_oidc_client_secret}"
-  authentication_oidc_issuer                      = "${var.atlantis_oidc_issuer}"
-  authentication_oidc_authorization_endpoint      = "${var.atlantis_oidc_authorization_endpoint}"
-  authentication_oidc_token_endpoint              = "${var.atlantis_oidc_token_endpoint}"
-  authentication_oidc_user_info_endpoint          = "${var.atlantis_oidc_user_info_endpoint}"
+
+  alb_ingress_unauthenticated_paths             = ["${var.atlantis_alb_ingress_unauthenticated_paths}"]
+  alb_ingress_listener_unauthenticated_priority = "${var.atlantis_alb_ingress_listener_unauthenticated_priority}"
+  alb_ingress_authenticated_paths               = ["${var.atlantis_alb_ingress_authenticated_paths}"]
+  alb_ingress_listener_authenticated_priority   = "${var.atlantis_alb_ingress_listener_authenticated_priority}"
+
+  authentication_type                        = "${var.atlantis_authentication_type}"
+  authentication_cognito_user_pool_arn       = "${var.atlantis_cognito_user_pool_arn}"
+  authentication_cognito_user_pool_client_id = "${var.atlantis_cognito_user_pool_client_id}"
+  authentication_cognito_user_pool_domain    = "${var.atlantis_cognito_user_pool_domain}"
+  authentication_oidc_client_id              = "${var.atlantis_oidc_client_id}"
+  authentication_oidc_client_secret          = "${var.atlantis_oidc_client_secret}"
+  authentication_oidc_issuer                 = "${var.atlantis_oidc_issuer}"
+  authentication_oidc_authorization_endpoint = "${var.atlantis_oidc_authorization_endpoint}"
+  authentication_oidc_token_endpoint         = "${var.atlantis_oidc_token_endpoint}"
+  authentication_oidc_user_info_endpoint     = "${var.atlantis_oidc_user_info_endpoint}"
 }
 
 output "atlantis_url" {
