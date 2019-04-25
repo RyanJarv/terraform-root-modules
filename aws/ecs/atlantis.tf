@@ -62,21 +62,9 @@ variable "atlantis_cognito_user_pool_arn" {
   default     = ""
 }
 
-variable "atlantis_cognito_user_pool_arn_ssm_name" {
-  type        = "string"
-  description = "SSM param name to lookup `atlantis_cognito_user_pool_arn` if not provided"
-  default     = ""
-}
-
 variable "atlantis_cognito_user_pool_client_id" {
   type        = "string"
   description = "Cognito User Pool Client ID"
-  default     = ""
-}
-
-variable "atlantis_cognito_user_pool_client_id_ssm_name" {
-  type        = "string"
-  description = "SSM param name to lookup `atlantis_cognito_user_pool_client_id` if not provided"
   default     = ""
 }
 
@@ -86,33 +74,15 @@ variable "atlantis_cognito_user_pool_domain" {
   default     = ""
 }
 
-variable "atlantis_cognito_user_pool_domain_ssm_name" {
-  type        = "string"
-  description = "SSM param name to lookup `atlantis_cognito_user_pool_domain` if not provided"
-  default     = ""
-}
-
 variable "atlantis_oidc_client_id" {
   type        = "string"
   description = "OIDC Client ID"
   default     = ""
 }
 
-variable "atlantis_oidc_client_id_ssm_name" {
-  type        = "string"
-  description = "SSM param name to lookup `atlantis_oidc_client_id` if not provided"
-  default     = ""
-}
-
 variable "atlantis_oidc_client_secret" {
   type        = "string"
   description = "OIDC Client Secret"
-  default     = ""
-}
-
-variable "atlantis_oidc_client_secret_ssm_name" {
-  type        = "string"
-  description = "SSM param name to lookup `atlantis_oidc_client_secret` if not provided"
   default     = ""
 }
 
@@ -164,76 +134,9 @@ variable "atlantis_alb_ingress_authenticated_paths" {
   description = "Authenticated path pattern to match (a maximum of 1 can be defined)"
 }
 
-variable "kms_key_id" {
-  type        = "string"
-  description = "KMS key ID used to encrypt SSM SecureString parameters"
-  default     = ""
-}
-
-variable "chamber_format" {
-  type        = "string"
-  description = "Format to store parameters in SSM, for consumption with chamber"
-  default     = "/%s/%s"
-}
-
-variable "chamber_service" {
-  type        = "string"
-  description = "SSM parameter service name for use with chamber. This is used in chamber_format where /$chamber_service/$parameter would be the default."
-  default     = "atlantis"
-}
-
-variable "overwrite_ssm_parameter" {
-  type        = "string"
-  default     = "true"
-  description = "Whether to overwrite an existing SSM parameter"
-}
-
-data "aws_ssm_parameter" "atlantis_cognito_user_pool_arn" {
-  count = "${var.atlantis_authentication_type == "COGNITO" && length(var.atlantis_cognito_user_pool_arn) == 0 ? 1 : 0}"
-  name  = "${local.atlantis_cognito_user_pool_arn_ssm_name}"
-}
-
-data "aws_ssm_parameter" "atlantis_cognito_user_pool_client_id" {
-  count = "${var.atlantis_authentication_type == "COGNITO" && length(var.atlantis_cognito_user_pool_client_id) == 0 ? 1 : 0}"
-  name  = "${local.atlantis_cognito_user_pool_client_id_ssm_name}"
-}
-
-data "aws_ssm_parameter" "atlantis_cognito_user_pool_domain" {
-  count = "${var.atlantis_authentication_type == "COGNITO" && length(var.atlantis_cognito_user_pool_domain) == 0 ? 1 : 0}"
-  name  = "${local.atlantis_cognito_user_pool_domain_ssm_name}"
-}
-
-data "aws_ssm_parameter" "atlantis_oidc_client_id" {
-  count = "${var.atlantis_authentication_type == "OIDC" && length(var.atlantis_oidc_client_id) == 0 ? 1 : 0}"
-  name  = "${local.atlantis_oidc_client_id_ssm_name}"
-}
-
-data "aws_ssm_parameter" "atlantis_oidc_client_secret" {
-  count = "${var.atlantis_authentication_type == "OIDC" && length(var.atlantis_oidc_client_secret) == 0 ? 1 : 0}"
-  name  = "${local.atlantis_oidc_client_secret_ssm_name}"
-}
-
-locals {
-  kms_key_id = "${length(var.kms_key_id) > 0 ? var.kms_key_id : format("alias/%s-%s-chamber", var.namespace, var.stage)}"
-
-  atlantis_cognito_user_pool_arn          = "${length(join("", data.aws_ssm_parameter.atlantis_cognito_user_pool_arn.*.value)) > 0 ? join("", data.aws_ssm_parameter.atlantis_cognito_user_pool_arn.*.value) : var.atlantis_cognito_user_pool_arn}"
-  atlantis_cognito_user_pool_arn_ssm_name = "${length(var.atlantis_cognito_user_pool_arn_ssm_name) > 0 ? var.atlantis_cognito_user_pool_arn_ssm_name : format(var.chamber_format, var.chamber_service, "atlantis_cognito_user_pool_arn")}"
-
-  atlantis_cognito_user_pool_client_id          = "${length(join("", data.aws_ssm_parameter.atlantis_cognito_user_pool_client_id.*.value)) > 0 ? join("", data.aws_ssm_parameter.atlantis_cognito_user_pool_client_id.*.value) : var.atlantis_cognito_user_pool_client_id}"
-  atlantis_cognito_user_pool_client_id_ssm_name = "${length(var.atlantis_cognito_user_pool_client_id_ssm_name) > 0 ? var.atlantis_cognito_user_pool_client_id_ssm_name : format(var.chamber_format, var.chamber_service, "atlantis_cognito_user_pool_client_id")}"
-
-  atlantis_cognito_user_pool_domain          = "${length(join("", data.aws_ssm_parameter.atlantis_cognito_user_pool_domain.*.value)) > 0 ? join("", data.aws_ssm_parameter.atlantis_cognito_user_pool_domain.*.value) : var.atlantis_cognito_user_pool_domain}"
-  atlantis_cognito_user_pool_domain_ssm_name = "${length(var.atlantis_cognito_user_pool_domain_ssm_name) > 0 ? var.atlantis_cognito_user_pool_domain_ssm_name : format(var.chamber_format, var.chamber_service, "atlantis_cognito_user_pool_domain")}"
-
-  atlantis_oidc_client_id          = "${length(join("", data.aws_ssm_parameter.atlantis_oidc_client_id.*.value)) > 0 ? join("", data.aws_ssm_parameter.atlantis_oidc_client_id.*.value) : var.atlantis_oidc_client_id}"
-  atlantis_oidc_client_id_ssm_name = "${length(var.atlantis_oidc_client_id_ssm_name) > 0 ? var.atlantis_oidc_client_id_ssm_name : format(var.chamber_format, var.chamber_service, "atlantis_oidc_client_id")}"
-
-  atlantis_oidc_client_secret          = "${length(join("", data.aws_ssm_parameter.atlantis_oidc_client_secret.*.value)) > 0 ? join("", data.aws_ssm_parameter.atlantis_oidc_client_secret.*.value) : var.atlantis_oidc_client_secret}"
-  atlantis_oidc_client_secret_ssm_name = "${length(var.atlantis_oidc_client_secret_ssm_name) > 0 ? var.atlantis_oidc_client_secret_ssm_name : format(var.chamber_format, var.chamber_service, "atlantis_oidc_client_secret")}"
-}
-
 module "atlantis" {
-  source    = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=tags/0.5.0"
+  #source    = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=tags/0.5.0"
+  source    = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=refactor"
   enabled   = "${var.atlantis_enabled}"
   name      = "${var.name}"
   namespace = "${var.namespace}"
@@ -274,65 +177,15 @@ module "atlantis" {
   alb_ingress_listener_authenticated_priority   = "${var.atlantis_alb_ingress_listener_authenticated_priority}"
 
   authentication_type                        = "${var.atlantis_authentication_type}"
-  authentication_cognito_user_pool_arn       = "${local.atlantis_cognito_user_pool_arn}"
-  authentication_cognito_user_pool_client_id = "${local.atlantis_cognito_user_pool_client_id}"
-  authentication_cognito_user_pool_domain    = "${local.atlantis_cognito_user_pool_domain}"
-  authentication_oidc_client_id              = "${local.atlantis_oidc_client_id}"
-  authentication_oidc_client_secret          = "${local.atlantis_oidc_client_secret}"
+  authentication_cognito_user_pool_arn       = "${var.atlantis_cognito_user_pool_arn}"
+  authentication_cognito_user_pool_client_id = "${var.atlantis_cognito_user_pool_client_id}"
+  authentication_cognito_user_pool_domain    = "${var.atlantis_cognito_user_pool_domain}"
+  authentication_oidc_client_id              = "${var.atlantis_oidc_client_id}"
+  authentication_oidc_client_secret          = "${var.atlantis_oidc_client_secret}"
   authentication_oidc_issuer                 = "${var.atlantis_oidc_issuer}"
   authentication_oidc_authorization_endpoint = "${var.atlantis_oidc_authorization_endpoint}"
   authentication_oidc_token_endpoint         = "${var.atlantis_oidc_token_endpoint}"
   authentication_oidc_user_info_endpoint     = "${var.atlantis_oidc_user_info_endpoint}"
-}
-
-resource "aws_ssm_parameter" "atlantis_cognito_user_pool_arn" {
-  count       = "${var.atlantis_authentication_type == "COGNITO" ? 1 : 0}"
-  overwrite   = "${var.overwrite_ssm_parameter}"
-  type        = "SecureString"
-  description = "Atlantis Cognito User Pool ARN"
-  key_id      = "${local.kms_key_id}"
-  name        = "${local.atlantis_cognito_user_pool_arn_ssm_name}"
-  value       = "${local.atlantis_cognito_user_pool_arn}"
-}
-
-resource "aws_ssm_parameter" "atlantis_cognito_user_pool_client_id" {
-  count       = "${var.atlantis_authentication_type == "COGNITO" ? 1 : 0}"
-  overwrite   = "${var.overwrite_ssm_parameter}"
-  type        = "SecureString"
-  description = "Atlantis Cognito User Pool Client ID"
-  key_id      = "${local.kms_key_id}"
-  name        = "${local.atlantis_cognito_user_pool_client_id_ssm_name}"
-  value       = "${local.atlantis_cognito_user_pool_client_id}"
-}
-
-resource "aws_ssm_parameter" "atlantis_cognito_user_pool_domain" {
-  count       = "${var.atlantis_authentication_type == "COGNITO" ? 1 : 0}"
-  overwrite   = "${var.overwrite_ssm_parameter}"
-  type        = "SecureString"
-  description = "Atlantis Cognito User Pool Domain"
-  key_id      = "${local.kms_key_id}"
-  name        = "${local.atlantis_cognito_user_pool_domain_ssm_name}"
-  value       = "${local.atlantis_cognito_user_pool_domain}"
-}
-
-resource "aws_ssm_parameter" "atlantis_oidc_client_id" {
-  count       = "${var.atlantis_authentication_type == "OIDC" ? 1 : 0}"
-  overwrite   = "${var.overwrite_ssm_parameter}"
-  type        = "SecureString"
-  description = "Atlantis OIDC Client ID"
-  key_id      = "${local.kms_key_id}"
-  name        = "${local.atlantis_oidc_client_id_ssm_name}"
-  value       = "${local.atlantis_oidc_client_id}"
-}
-
-resource "aws_ssm_parameter" "atlantis_oidc_client_secret" {
-  count       = "${var.atlantis_authentication_type == "OIDC" ? 1 : 0}"
-  overwrite   = "${var.overwrite_ssm_parameter}"
-  type        = "SecureString"
-  description = "Atlantis OIDC Client Secret"
-  key_id      = "${local.kms_key_id}"
-  name        = "${local.atlantis_oidc_client_secret_ssm_name}"
-  value       = "${local.atlantis_oidc_client_secret}"
 }
 
 output "atlantis_url" {
