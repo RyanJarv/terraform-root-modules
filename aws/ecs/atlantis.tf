@@ -24,12 +24,12 @@ variable "atlantis_repo_whitelist" {
 variable "atlantis_branch" {
   type        = "string"
   default     = "master"
-  description = "Atlantis branch Branch of the GitHub repository, _e.g._ `master`"
+  description = "Atlantis branch of the GitHub repository, _e.g._ `master`"
 }
 
 variable "atlantis_repo_name" {
   type        = "string"
-  description = "GitHub repository name of the atlantis to be built and deployed to ECS."
+  description = "GitHub repository name of the atlantis to be built and deployed to ECS"
 }
 
 variable "atlantis_repo_owner" {
