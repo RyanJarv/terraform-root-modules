@@ -136,12 +136,15 @@ variable "atlantis_alb_ingress_authenticated_paths" {
 
 module "atlantis" {
   #source    = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=tags/0.5.0"
-  source    = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=refactor"
-  enabled   = "${var.atlantis_enabled}"
-  name      = "${var.name}"
+  source  = "git::https://github.com/cloudposse/terraform-aws-ecs-atlantis.git?ref=refactor"
+  enabled = "${var.atlantis_enabled}"
+
   namespace = "${var.namespace}"
-  region    = "${var.region}"
   stage     = "${var.stage}"
+  name      = "${var.name}"
+
+  region          = "${var.region}"
+  aws_logs_region = "${var.region}"
 
   atlantis_gh_team_whitelist = "${var.atlantis_gh_team_whitelist}"
   atlantis_gh_user           = "${var.atlantis_gh_user}"
@@ -155,15 +158,15 @@ module "atlantis" {
   container_cpu    = "${var.atlantis_container_cpu}"
   container_memory = "${var.atlantis_container_memory}"
 
-  branch             = "${var.atlantis_branch}"
-  parent_zone_id     = "${module.dns.zone_id}"
-  ecs_cluster_arn    = "${aws_ecs_cluster.default.arn}"
-  ecs_cluster_name   = "${aws_ecs_cluster.default.name}"
-  repo_name          = "${var.atlantis_repo_name}"
-  repo_owner         = "${var.atlantis_repo_owner}"
-  private_subnet_ids = ["${module.subnets.private_subnet_ids}"]
-  security_group_ids = ["${module.vpc.vpc_default_security_group_id}"]
-  vpc_id             = "${module.vpc.vpc_id}"
+  branch                 = "${var.atlantis_branch}"
+  parent_zone_id         = "${module.dns.zone_id}"
+  ecs_cluster_arn        = "${aws_ecs_cluster.default.arn}"
+  ecs_cluster_name       = "${aws_ecs_cluster.default.name}"
+  repo_name              = "${var.atlantis_repo_name}"
+  repo_owner             = "${var.atlantis_repo_owner}"
+  ecs_private_subnet_ids = ["${module.subnets.private_subnet_ids}"]
+  security_group_ids     = ["${module.vpc.vpc_default_security_group_id}"]
+  vpc_id                 = "${module.vpc.vpc_id}"
 
   alb_ingress_authenticated_listener_arns       = ["${module.alb.https_listener_arn}"]
   alb_ingress_authenticated_listener_arns_count = 1
