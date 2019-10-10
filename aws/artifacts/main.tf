@@ -69,7 +69,7 @@ module "cdn" {
   namespace              = "${var.namespace}"
   stage                  = "${var.stage}"
   name                   = "${local.name}"
-  aliases                = ["${local.cdn_domain}", "artifacts.cloudposse.com"]
+  aliases                = ["${local.cdn_domain}", "artifacts.ryanjarv.sh"]
   origin_domain_name     = "${module.origin.s3_bucket_website_endpoint}"
   origin_protocol_policy = "http-only"
   viewer_protocol_policy = "redirect-to-https"

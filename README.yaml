@@ -28,22 +28,22 @@ categories:
 license: "APACHE2"
 
 # Canonical GitHub repo
-github_repo: "cloudposse/terraform-root-modules"
+github_repo: "ryanjarv/terraform-root-modules"
 
 # Badges to display
 badges:
   - name: "Build Status"
-    image: "https://travis-ci.org/cloudposse/terraform-root-modules.svg?branch=master"
-    url: "https://travis-ci.org/cloudposse/terraform-root-modules"
+    image: "https://travis-ci.org/ryanjarv/terraform-root-modules.svg?branch=master"
+    url: "https://travis-ci.org/ryanjarv/terraform-root-modules"
   - name: "Codefresh Build Status"
-    image: "https://g.codefresh.io/api/badges/build?repoOwner=cloudposse&repoName=terraform-root-modules&branch=master&pipelineName=terraform-root-modules&accountName=cloudposse&type=cf-1"
+    image: "https://g.codefresh.io/api/badges/build?repoOwner=ryanjarv&repoName=terraform-root-modules&branch=master&pipelineName=terraform-root-modules&accountName=ryanjarv&type=cf-1"
     url: "https://g.codefresh.io/pipelines/terraform-root-modules/builds"
   - name: "Latest Release"
-    image: "https://img.shields.io/github/release/cloudposse/terraform-root-modules.svg"
-    url: "https://github.com/cloudposse/terraform-root-modules/releases/latest"
+    image: "https://img.shields.io/github/release/ryanjarv/terraform-root-modules.svg"
+    url: "https://github.com/ryanjarv/terraform-root-modules/releases/latest"
   - name: "Slack Community"
-    image: "https://slack.cloudposse.com/badge.svg"
-    url: "https://slack.cloudposse.com"
+    image: "https://slack.ryanjarv.sh/badge.svg"
+    url: "https://slack.ryanjarv.sh"
 
 references:
   - name: "Cloud Posse Documentation"
@@ -54,18 +54,18 @@ related:
   - name: "reference-architectures"
     description: "Get up and running quickly with one of our reference architecture using our fully automated cold-start process."
     url: "https://github.com/cloudposse/reference-architectures"
-  - name: "audit.cloudposse.co"
+  - name: "audit.ryanjarv.sh"
     description: "Example Terraform Reference Architecture of a Geodesic Module for an Audit Logs Organization in AWS."
-    url: "https://github.com/cloudposse/audit.cloudposse.co"
-  - name: "prod.cloudposse.co"
+    url: "https://github.com/ryanjarv/audit.ryanjarv.sh"
+  - name: "prod.ryanjarv.sh"
     description: "Example Terraform Reference Architecture of a Geodesic Module for a Production Organization in AWS."
-    url: "https://github.com/cloudposse/prod.cloudposse.co"
-  - name: "staging.cloudposse.co"
+    url: "https://github.com/ryanjarv/prod.ryanjarv.sh"
+  - name: "staging.ryanjarv.sh"
     description: "Example Terraform Reference Architecture of a Geodesic Module for a Staging Organization in AWS."
-    url: "https://github.com/cloudposse/staging.cloudposse.co"
-  - name: "dev.cloudposse.co"
+    url: "https://github.com/ryanjarv/staging.ryanjarv.sh"
+  - name: "dev.ryanjarv.sh"
     description: "Example Terraform Reference Architecture of a Geodesic Module for a Development Sandbox Organization in AWS."
-    url: "https://github.com/cloudposse/dev.cloudposse.co"
+    url: "https://github.com/ryanjarv/dev.ryanjarv.sh"
 
 # Short description of this project
 description: |-

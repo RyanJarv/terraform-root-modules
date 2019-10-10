@@ -18,7 +18,7 @@ steps:
 
   semver:
     title: Export semantic version
-    image: cloudposse/build-harness:${{BUILD_HARNESS_VERSION}}
+    image: ryanjarv/build-harness:${{BUILD_HARNESS_VERSION}}
     working_directory: ${{build_image}}
     commands:
       - make git/show
@@ -47,7 +47,7 @@ steps:
     title: Push image with branch based semver tags
     type: push
     registry: dockerhub
-    image_name: cloudposse/terraform-root-modules
+    image_name: ryanjarv/terraform-root-modules
     candidate: ${{build_image}}
     tags:
       - "${{SEMVERSION_BRANCH}}"
@@ -71,7 +71,7 @@ steps:
     title: Push image with tag based semver tags
     type: push
     registry: dockerhub
-    image_name: cloudposse/terraform-root-modules
+    image_name: ryanjarv/terraform-root-modules
     candidate: ${{build_image}}
     tag: "${{SEMVERSION_TAG}}"
     when:
@@ -95,7 +95,7 @@ steps:
     title: Push image with latest tag
     type: push
     registry: dockerhub
-    image_name: cloudposse/terraform-root-modules
+    image_name: ryanjarv/terraform-root-modules
     candidate: ${{build_image}}
     tag: latest
     when:
