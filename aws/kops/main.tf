@@ -19,23 +19,24 @@ locals {
 
   # If we are creating the VPC, concatenate the predefined AZs with the computed AZs and select the first N distinct AZs.
   # If we are using a shared VPC, use the availability zones dictated by the VPC
-  availability_zones = "${split(",", var.create_vpc == "true" ? join(",", slice(local.distinct_availability_zones, 0, var.availability_zone_count)) : join("",data.aws_ssm_parameter.availability_zones.*.value))}"
+  availability_zones = "${split(",", var.create_vpc == "true" ? join(",", slice(local.distinct_availability_zones, 0, var.availability_zone_count)) : join("", data.aws_ssm_parameter.availability_zones.*.value))}"
 
   availability_zone_count = "${length(local.availability_zones)}"
 }
 
 module "kops_state_backend" {
-  source           = "git::https://github.com/cloudposse/terraform-aws-kops-state-backend.git?ref=tags/0.1.7"
+  source           = "git::https://github.com/cloudposse/terraform-aws-kops-state-backend.git?ref=tags/0.3.0"
   namespace        = "${var.namespace}"
   stage            = "${var.stage}"
   name             = "${var.name}"
   attributes       = ["${var.kops_attribute}"]
-  cluster_name     = "${var.region}"
+  cluster_name     = "${coalesce(var.cluster_name_prefix, var.resource_region, var.region)}"
   parent_zone_name = "${var.zone_name}"
   zone_name        = "${var.complete_zone_name}"
   domain_enabled   = "${var.domain_enabled}"
   force_destroy    = "${var.force_destroy}"
-  region           = "${var.region}"
+  region           = "${coalesce(var.state_store_region, var.region)}"
+  create_bucket    = "${var.create_state_store_bucket}"
 }
 
 module "ssh_key_pair" {
@@ -43,7 +44,7 @@ module "ssh_key_pair" {
   namespace            = "${var.namespace}"
   stage                = "${var.stage}"
   name                 = "${var.name}"
-  attributes           = ["${var.region}"]
+  attributes           = ["${coalesce(var.resource_region, var.region)}"]
   ssm_path_prefix      = "${local.chamber_service}"
   rsa_bits             = "${var.ssh_key_rsa_bits}"
   ssh_key_algorithm    = "${var.ssh_key_algorithm}"
@@ -58,7 +59,7 @@ module "private_subnets" {
   iprange      = "${local.vpc_network_cidr}"
   newbits      = "${var.private_subnets_newbits > 0 ? var.private_subnets_newbits : local.availability_zone_count}"
   netnum       = "${var.private_subnets_netnum}"
-  subnet_count = "${local.availability_zone_count+1}"
+  subnet_count = "${local.availability_zone_count + 1}"
 }
 
 # Divide up the first private subnet and use it for the utility subnet
@@ -126,9 +127,9 @@ data "aws_ssm_parameter" "public_subnet_ids" {
 ######
 
 locals {
-  vpc_network_cidr     = "${var.create_vpc == "true" ? var.network_cidr : join("",data.aws_ssm_parameter.vpc_cidr_block.*.value)}"
-  private_subnet_cidrs = "${var.create_vpc == "true" ? join(",", slice(module.private_subnets.cidrs, 1, local.availability_zone_count+1)) : join("",data.aws_ssm_parameter.private_subnet_cidrs.*.value)}"
-  utility_subnet_cidrs = "${var.create_vpc == "true" ? join(",", module.utility_subnets.cidrs): join("",data.aws_ssm_parameter.public_subnet_cidrs.*.value)}"
+  vpc_network_cidr     = "${var.create_vpc == "true" ? var.network_cidr : join("", data.aws_ssm_parameter.vpc_cidr_block.*.value)}"
+  private_subnet_cidrs = "${var.create_vpc == "true" ? join(",", slice(module.private_subnets.cidrs, 1, local.availability_zone_count + 1)) : join("", data.aws_ssm_parameter.private_subnet_cidrs.*.value)}"
+  utility_subnet_cidrs = "${var.create_vpc == "true" ? join(",", module.utility_subnets.cidrs) : join("", data.aws_ssm_parameter.public_subnet_cidrs.*.value)}"
 }
 
 # These parameters correspond to the kops manifest template:
@@ -162,6 +163,14 @@ resource "aws_ssm_parameter" "kops_dns_zone" {
   name        = "${format(var.chamber_parameter_name, local.chamber_service, "kops_dns_zone")}"
   value       = "${module.kops_state_backend.zone_name}"
   description = "Kops DNS zone name"
+  type        = "String"
+  overwrite   = "true"
+}
+
+resource "aws_ssm_parameter" "kops_dns_zone_id" {
+  name        = "${format(var.chamber_parameter_name, local.chamber_service, "kops_dns_zone_id")}"
+  value       = "${module.kops_state_backend.zone_id}"
+  description = "Kops DNS zone ID"
   type        = "String"
   overwrite   = "true"
 }
